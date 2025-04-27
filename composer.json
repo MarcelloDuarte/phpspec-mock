@@ -1,0 +1,24 @@
+{
+    "name": "md/phpspec-mock",
+    "autoload": {
+        "psr-4": {
+            "Phpspec\\Mock\\": "src/"
+
+        }
+    },
+    "autoload-dev:": {
+        "psr-4": {
+            "Tests\\Phpspec\\Mock\\": "tests/unit/",
+            "fixtures\\": "tests/fixtures"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marcello Duarte",
+            "email": "marcello.duarte@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^12.1"
+    }
+}
