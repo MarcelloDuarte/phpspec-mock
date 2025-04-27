@@ -6,24 +6,22 @@ class ParametersGenerator
 {
     use TypeReflection;
 
-    public function generate(array $reflectionParameters): array
+    public function generate(\ReflectionMethod $method): string
     {
-        $parameters = [];
-        $variables = [];
+        $params = [];
 
-        foreach ($reflectionParameters as $parameter) {
+        foreach ($method->getParameters() as $parameter) {
             $type = $parameter->hasType() ? $this->getTypeDeclaration($parameter->getType()) . ' ' : '';
             $variadic = $parameter->isVariadic() ? '...' : '';
             $param = $type . $variadic . '$' . $parameter->name;
 
-            if ($parameter->isDefaultValueAvailable() && !$parameter->isVariadic()) {
-                $param .= ' = ' . var_export($parameter->getDefaultValue(), true);
+            if ($parameter->isOptional() && !$parameter->isVariadic()) {
+                $param .= ' = null';
             }
 
-            $parameters[] = $param;
-            $variables[] = ($parameter->isVariadic() ? '...' : '') . '$' . $parameter->name;
+            $params[] = $param;
         }
 
-        return [implode(', ', $parameters), $variables];
+        return implode(', ', $params);
     }
 }

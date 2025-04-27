@@ -34,6 +34,16 @@ class DoubleGeneratorTest extends TestCase
 
         $generator->generate(\ReflectionClass::class);
     }
+
+    public function testItGeneratesMethodWithCorrectSignatureAndBody()
+    {
+        $generator = new DoubleGenerator();
+
+        [$classCode, $className] = $generator->generate(SomeClass::class);
+
+        $this->assertStringContainsString('public function simpleMethod(int $a, string $b)', $classCode);
+        $this->assertStringContainsString('return $this->doubler->call("simpleMethod", [$a, $b]);', $classCode);
+    }
 }
 
 interface SomeInterface

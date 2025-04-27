@@ -8,15 +8,14 @@ use ReflectionClass;
 class DoubleGenerator
 {
     use TypeReflection;
+
     private ClassGenerator $classGenerator;
     private MethodGenerator $methodGenerator;
-    private ParametersGenerator $parametersGenerator;
 
     public function __construct()
     {
         $this->classGenerator = new ClassGenerator();
-        $this->methodGenerator = new MethodGenerator();
-        $this->parametersGenerator = new ParametersGenerator();
+        $this->methodGenerator = new MethodGenerator(new ParametersGenerator());
     }
 
     /**
@@ -38,7 +37,9 @@ class DoubleGenerator
                 throw new CollaboratorClassDoesNotExistException("Class or interface '$name' does not exist");
             }
             foreach ($reflection->getMethods() as $method) {
-                $methodsCode .= $this->generateMethod($method);
+                if ($method->isPublic() && !$method->isConstructor()) {
+                    $methodsCode .= $this->generateMethod($method);
+                }
             }
         }
 
@@ -50,7 +51,7 @@ class DoubleGenerator
     private function getExtendsOrImplements(?string $name): string
     {
         if ($name === null) {
-            return ' implements \Phpspec\Mock\DoubleInterface';
+            return ' implements \\Phpspec\\Mock\\DoubleInterface';
         }
 
         try {
@@ -59,13 +60,12 @@ class DoubleGenerator
             if ($reflection->isInternal()) {
                 throw new \RuntimeException("Cannot create doubles for internal PHP classes: $name");
             }
-            
+
             if ($reflection->isInterface()) {
                 return "implements $name, \\Phpspec\\Mock\\DoubleInterface";
             }
         } catch (\ReflectionException $e) {
         }
-        
 
         return "extends $name implements \\Phpspec\\Mock\\DoubleInterface";
     }
@@ -76,32 +76,14 @@ class DoubleGenerator
      */
     public function generateMethod(\ReflectionMethod $method): string
     {
-        $methodsCode = '';
-        if ($method->isPublic() && ! $method->isConstructor()) {
-            [$params, $variables] = $this->parametersGenerator->generate($method->getParameters());
-            $returnType = $method->hasReturnType() ? $this->getTypeDeclaration($method->getReturnType()) : null;
+        $variables = array_map(fn($p) => ($p->isVariadic() ? '...' : '') . '$' . $p->name, $method->getParameters());
 
-            if ($returnType === 'void') {
-                $methodBody = sprintf(
-                    "\$this->doubler->call(\"%s\", [%s]);",
-                    $method->name,
-                    implode(', ', $variables)
-                );
-            } else {
-                $methodBody = sprintf(
-                    "return \$this->doubler->call(\"%s\", [%s]);",
-                    $method->name,
-                    implode(', ', $variables)
-                );
-            }
+        $returnType = $method->hasReturnType() ? $this->getTypeDeclaration($method->getReturnType()) : null;
 
-            $methodsCode .= $this->methodGenerator->generate(
-                $method->name,
-                $params,
-                $returnType,
-                $methodBody
-            );
-        }
-        return $methodsCode;
+        $body = ($returnType === 'void')
+            ? sprintf("\$this->doubler->call(\"%s\", [%s]);", $method->getName(), implode(', ', $variables))
+            : sprintf("return \$this->doubler->call(\"%s\", [%s]);", $method->getName(), implode(', ', $variables));
+
+        return $this->methodGenerator->generate($method, $body);
     }
 }

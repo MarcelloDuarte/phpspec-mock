@@ -7,19 +7,55 @@ use Phpspec\Mock\CodeGeneration\ParametersGenerator;
 
 class ParametersGeneratorTest extends TestCase
 {
-    public function testItGeneratesParameters()
+    private ParametersGenerator $generator;
+
+    protected function setUp(): void
     {
-        $reflection = new \ReflectionMethod(SomeClass::class, 'method');
-        $generator = new ParametersGenerator();
+        $this->generator = new ParametersGenerator();
+    }
 
-        [$params, $variables] = $generator->generate($reflection->getParameters());
+    public function testItGeneratesSimpleParameters()
+    {
+        $reflection = new \ReflectionMethod(SomeClass::class, 'simpleMethod');
 
-        $this->assertSame('int $a, string $b = \'default\'', $params);
-        $this->assertSame(['$a', '$b'], $variables);
+        $generated = $this->generator->generate($reflection);
+
+        $this->assertSame('int $a, string $b', $generated);
+    }
+
+    public function testItHandlesNullableTypes()
+    {
+        $reflection = new \ReflectionMethod(SomeClass::class, 'nullableMethod');
+
+        $generated = $this->generator->generate($reflection);
+
+        $this->assertSame('?string $a', $generated);
+    }
+
+    public function testItHandlesVariadicParameters()
+    {
+        $reflection = new \ReflectionMethod(SomeClass::class, 'variadicMethod');
+
+        $generated = $this->generator->generate($reflection);
+
+        $this->assertSame('string ...$args', $generated);
+    }
+
+    public function testItHandlesOptionalParameters()
+    {
+        $reflection = new \ReflectionMethod(SomeClass::class, 'optionalMethod');
+
+        $generated = $this->generator->generate($reflection);
+
+        $this->assertSame('?int $a = null, ?string $b = null', $generated);
     }
 }
 
+// Helper class
 class SomeClass
 {
-    public function method(int $a, string $b = 'default') {}
+    public function simpleMethod(int $a, string $b) {}
+    public function nullableMethod(?string $a) {}
+    public function variadicMethod(string ...$args) {}
+    public function optionalMethod(int $a = null, string $b = null) {}
 }
