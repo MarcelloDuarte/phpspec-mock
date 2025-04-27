@@ -2,25 +2,56 @@
 
 namespace Phpspec\Mock;
 
-class DoubledMethod
+use Exception;
+
+final class DoubledMethod
 {
     private array $stubs = [];
+    private null|Exception|string $exceptionToThrow = null;
 
     public function __construct(private string $name, private array $arguments = [])
     {}
 
-    public function willReturn(...$returnValues)
+    public function willReturn(...$returnValues): void
     {
         $this->stubs = $returnValues;
     }
 
-    public function satisfies(string $methodName, array $arguments = [])
+    public function willThrow(Exception|string $exception): void
+    {
+        $this->exceptionToThrow = $exception;
+    }
+
+    public function satisfies(string $methodName, array $arguments = []): bool
     {
         return $methodName === $this->name && $arguments == $this->arguments;
     }
 
-    public function stubbedValue()
+    public function hasStubs(): bool
+    {
+        return $this->stubs !== [];
+    }
+
+    public function stubbedValue(): mixed
     {
         return current($this->stubs);
+    }
+
+    public function isThrowing(): bool
+    {
+        return $this->exceptionToThrow !== null;
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function throwException(): void
+    {
+        if ($this->exceptionToThrow instanceof Exception) {
+            throw $this->exceptionToThrow;
+        } else {
+            throw new $this->exceptionToThrow;
+        }
     }
 }

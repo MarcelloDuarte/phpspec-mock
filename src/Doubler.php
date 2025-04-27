@@ -4,14 +4,6 @@ namespace Phpspec\Mock;
 
 class Doubler
 {
-    public DoubleMode $mode = DoubleMode::ConfigurationMode {
-        get {
-            return $this->mode;
-        }
-        set(DoubleMode $value) {
-            $this->mode = $value;
-        }
-    }
     /**
      * @var DoubledMethod[]
      */
@@ -24,22 +16,19 @@ class Doubler
 
     public function call($name, $arguments)
     {
-        return match ($this->mode) {
-            DoubleMode::ConfigurationMode => (function(){
-                $doubledMethod = new DoubledMethod('someMethod', []);
-                $this->addDoubledMethod($doubledMethod);
+        foreach ($this->doubledMethods as $doubledMethod) {
 
-                return $doubledMethod;
-            })(),
-            DoubleMode::ExecutionMode => (function() use ($name, $arguments) {
-                foreach ($this->doubledMethods as $doubledMethod) {
-                    if ($doubledMethod->satisfies($name, $arguments)) {
-                        return $doubledMethod->stubbedValue();
-                    }
+            if ($doubledMethod->satisfies($name, $arguments)) {
+
+                if ($doubledMethod->isThrowing()) {
+                    $doubledMethod->throwException();
                 }
-                throw new \BadMethodCallException("Method $name was not stubbed");
-            })()
-        };
-    }
 
+                if ($doubledMethod->hasStubs()) {
+                    return $doubledMethod->stubbedValue();
+                }
+            }
+        }
+        throw new \BadMethodCallException("Method $name was not stubbed");
+    }
 }
