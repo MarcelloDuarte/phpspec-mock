@@ -57,5 +57,5 @@ class SomeClass
     public function simpleMethod(int $a, string $b) {}
     public function nullableMethod(?string $a) {}
     public function variadicMethod(string ...$args) {}
-    public function optionalMethod(int $a = null, string $b = null) {}
+    public function optionalMethod(?int $a = null, ?string $b = null) {}
 }
