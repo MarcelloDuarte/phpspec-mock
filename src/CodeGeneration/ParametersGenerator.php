@@ -16,7 +16,8 @@ class ParametersGenerator
             $param = $type . $variadic . '$' . $parameter->name;
 
             if ($parameter->isOptional() && !$parameter->isVariadic()) {
-                $param .= ' = null';
+                $default = var_export($parameter->getDefaultValue(), true);
+                $param .= ' = ' . $default;
             }
 
             $params[] = $param;

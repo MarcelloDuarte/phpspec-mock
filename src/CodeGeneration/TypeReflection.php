@@ -16,6 +16,10 @@ trait TypeReflection
             }, $type->getTypes()));
         }
 
+        if ($type instanceof \ReflectionIntersectionType) {
+            return implode('&', array_map(fn($t) => $this->formatType($t), $type->getTypes()));
+        }
+
         return (string) $type;
     }
 

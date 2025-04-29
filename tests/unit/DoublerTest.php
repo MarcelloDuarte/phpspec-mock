@@ -2,12 +2,15 @@
 
 namespace Tests\PhpSpec\Mock;
 
+use BadMethodCallException;
+use PhpSpec\Mock\Double;
 use PhpSpec\Mock\Doubler;
-use PhpSpec\Mock\StubbedMethod;
-use PhpSpec\Mock\MockedMethod;
+use PhpSpec\Mock\Matcher\MatcherRegistry;
+use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
+use PhpSpec\Mock\Wrapper\MockedMethod;
+use PhpSpec\Mock\Wrapper\StubbedMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use BadMethodCallException;
 
 class DoublerTest extends TestCase
 {
@@ -25,11 +28,15 @@ class DoublerTest extends TestCase
 
     public function testItRecordsCallWhenMockedMethodIsCalled()
     {
-        $doubler = new Doubler();
+        $registry = new MatcherRegistry();
+        $registry->addMatcher(new ShouldBeCalledMatcher());
 
         $mockedMethod = new MockedMethod('someMethod', [42]);
-        $mockedMethod->shouldBeCalled();
+        $mockedMethod->registerMatchers($registry);
 
+        $doubler = new Doubler();
+
+        $mockedMethod->shouldBeCalled();
         $doubler->addDoubledMethod($mockedMethod);
 
         // No return value expected from MockedMethod directly
@@ -51,11 +58,16 @@ class DoublerTest extends TestCase
     public function testItThrowsFromMockedMethodWhenExpectationFails()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Expected method "someMethod" to be called at least once');
+        $this->expectExceptionMessage('Expected method "someMethod" to be called at least once, but it was not.');
 
         $doubler = new Doubler();
 
+        $registry = new MatcherRegistry();
+        $registry->addMatcher(new ShouldBeCalledMatcher());
+
         $mockedMethod = new MockedMethod('someMethod', [42]);
+        $mockedMethod->registerMatchers($registry);
+
         $mockedMethod->shouldBeCalled();
 
         $doubler->addDoubledMethod($mockedMethod);
@@ -63,5 +75,28 @@ class DoublerTest extends TestCase
         // We do not call it!
 
         $mockedMethod->verify();
+    }
+
+    public function testStubbingAndMockingDesyncCausesVerificationFailure()
+    {
+        $double = Double::create(SomeService::class);
+
+        // Configure expectation and stub value
+        $double->someMethod(42)->shouldBeCalled();
+        $double->someMethod(42)->willReturn('ok');
+
+        // Use the double
+        $service = $double->stub();
+        $result = $service->someMethod(42);
+
+        $this->assertSame('ok', $result);
+
+        $double->verify();
+    }
+}
+
+class SomeService {
+    public function someMethod($x): string {
+        return 'ok';
     }
 }

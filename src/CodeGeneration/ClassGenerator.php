@@ -16,21 +16,11 @@ class $className $extendsOrImplements
         \$this->doubler = new \\PhpSpec\\Mock\\Doubler();
     }
 
-    $methods
+$methods
 
-    public function __setMode(\\PhpSpec\\Mock\\DoubleMode \$mode): void
+    public function addDoubledMethod(\\PhpSpec\\Mock\\Wrapper\\DoubledMethod \$doubledMethod): void
     {
-        \$this->doubler->mode = \$mode;
-    }
-
-    public function __getMode(): \\PhpSpec\\Mock\\DoubleMode
-    {
-        return \$this->doubler->mode;
-    }
-
-    public function getDoubler(): \\PhpSpec\\Mock\\Doubler
-    {
-        return \$this->doubler;
+        \$this->doubler->addDoubledMethod(\$doubledMethod);
     }
 }
 CODE;

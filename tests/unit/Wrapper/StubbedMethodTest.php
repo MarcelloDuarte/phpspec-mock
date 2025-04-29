@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\PhpSpec\Mock;
+namespace Tests\PhpSpec\Mock\Wrapper;
 
-use PhpSpec\Mock\StubbedMethod;
+use PhpSpec\Mock\Wrapper\StubbedMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

@@ -47,7 +47,7 @@ class ParametersGeneratorTest extends TestCase
 
         $generated = $this->generator->generate($reflection);
 
-        $this->assertSame('?int $a = null, ?string $b = null', $generated);
+        $this->assertSame('?int $a = NULL, ?string $b = NULL', $generated);
     }
 }
 

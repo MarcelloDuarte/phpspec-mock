@@ -2,11 +2,10 @@
 
 namespace PhpSpec\Mock;
 
+use PhpSpec\Mock\Wrapper\DoubledMethod;
+
 class Doubler
 {
-    /**
-     * @var StubbedMethod[]
-     */
     private iterable $doubledMethods = [];
 
     public function addDoubledMethod(DoubledMethod $doubledMethod): void
@@ -14,7 +13,7 @@ class Doubler
         $this->doubledMethods[] = $doubledMethod;
     }
 
-    public function call($name, $arguments): mixed
+    public function call(string $name, array $arguments): mixed
     {
         foreach ($this->doubledMethods as $doubledMethod) {
 

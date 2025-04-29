@@ -48,6 +48,9 @@ class DoubleGenerator
         return [$classCode, $className];
     }
 
+    /**
+     * @throws CollaboratorClassDoesNotExistException
+     */
     private function getExtendsOrImplements(?string $name): string
     {
         if ($name === null) {
@@ -65,6 +68,7 @@ class DoubleGenerator
                 return "implements $name, \\PhpSpec\\Mock\\DoubleInterface";
             }
         } catch (\ReflectionException $e) {
+            throw new CollaboratorClassDoesNotExistException("Class or interface '$name' does not exist");
         }
 
         return "extends $name implements \\PhpSpec\\Mock\\DoubleInterface";
