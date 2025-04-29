@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Phpspec\Mock\CodeGeneration;
+namespace Tests\PhpSpec\Mock\CodeGeneration;
 
 use PHPUnit\Framework\TestCase;
-use Phpspec\Mock\CodeGeneration\ParametersGenerator;
+use PhpSpec\Mock\CodeGeneration\ParametersGenerator;
 
 class ParametersGeneratorTest extends TestCase
 {
@@ -47,7 +47,7 @@ class ParametersGeneratorTest extends TestCase
 
         $generated = $this->generator->generate($reflection);
 
-        $this->assertSame('?int $a = null, ?string $b = null', $generated);
+        $this->assertSame('?int $a = NULL, ?string $b = NULL', $generated);
     }
 }
 

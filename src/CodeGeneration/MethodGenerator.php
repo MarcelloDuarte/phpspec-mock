@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpspec\Mock\CodeGeneration;
+namespace PhpSpec\Mock\CodeGeneration;
 
 class MethodGenerator
 {
@@ -20,11 +20,11 @@ class MethodGenerator
         $returnType = $method->hasReturnType() ? ': ' . $this->getTypeDeclaration($method->getReturnType()) : '';
 
         return <<<CODE
-#[\\ReturnTypeWillChange]
-public function $methodName($parameters)$returnType
-{
-    $body
-}
+    #[\\ReturnTypeWillChange]
+    public function $methodName($parameters)$returnType
+    {
+        $body
+    }
 
 CODE;
     }

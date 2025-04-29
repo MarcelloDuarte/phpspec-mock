@@ -1,10 +1,11 @@
 <?php
 
-namespace Phpspec\Mock;
+namespace PhpSpec\Mock\Wrapper;
 
 use Exception;
+use PhpSpec\Mock\Matcher\MatcherRegistry;
 
-final class DoubledMethod
+final class StubbedMethod implements DoubledMethod, ObjectWrapper
 {
     private array $stubs = [];
     private null|Exception|string $exceptionToThrow = null;
@@ -53,5 +54,23 @@ final class DoubledMethod
         } else {
             throw new $this->exceptionToThrow;
         }
+    }
+
+    public function call(string $name, array $arguments)
+    {
+        if ($this->isThrowing()) {
+            $this->throwException();
+        }
+
+        if ($this->hasStubs()) {
+            return $this->stubbedValue();
+        }
+
+        return null;
+    }
+
+    public function registerMatchers(MatcherRegistry $registry): void
+    {
+        // No-op for stubs
     }
 }

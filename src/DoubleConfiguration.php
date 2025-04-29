@@ -1,13 +1,31 @@
 <?php
 
-namespace Phpspec\Mock;
+namespace PhpSpec\Mock;
 
-use Phpspec\Mock\DoubleInterface as DoubleObject;
+use PhpSpec\Mock\DoubleInterface as DoubleObject;
+use PhpSpec\Mock\Matcher\MatcherRegistry;
+use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
+use PhpSpec\Mock\Matcher\ShouldNotBeCalledMatcher;
+use PhpSpec\Mock\Wrapper\CompositeDoubledMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod;
+use PhpSpec\Mock\Wrapper\MockedMethod;
+use PhpSpec\Mock\Wrapper\StubbedMethod;
+use PhpSpec\Mock\Wrapper\WrapperRegistry;
 
-readonly final class DoubleConfiguration
+final class DoubleConfiguration
 {
-    public function __construct(private DoubleObject $double)
+    private array $wrappers = [];
+
+    public function __construct(
+        private readonly DoubleObject $double,
+        private ?WrapperRegistry $wrapperRegistry = null,
+        private ?MatcherRegistry $matcherRegistry = null,
+    )
     {
+        $this->wrapperRegistry ??= new WrapperRegistry();
+        $this->matcherRegistry ??= new MatcherRegistry();
+        $this->registerDefaultWrappers();
+        $this->registerDefaultMatchers();
     }
 
     public function stub(): object
@@ -25,10 +43,47 @@ readonly final class DoubleConfiguration
         return $this->double;
     }
 
-    public function __call(string $method, array $args): DoubledMethod
+    public function __call(string $methodName, array $arguments = []): DoubledMethod
     {
-        $doubledMethod = new DoubledMethod($method, $args);
-        $this->double->getDoubler()->addDoubledMethod($doubledMethod);
-        return $doubledMethod;
+        foreach ($this->wrappers as $existingWrapper) {
+            if ($existingWrapper->satisfies($methodName, $arguments)) {
+                return $existingWrapper;
+            }
+        }
+
+        foreach ($this->wrapperRegistry->all() as $wrapper) {
+            $doubledMethod = $wrapper($methodName, $arguments);
+            $this->wrappers[] = $doubledMethod;
+            $this->double->addDoubledMethod($doubledMethod);
+
+            return $doubledMethod;
+        }
+
+        throw new \RuntimeException("Method $methodName does not exist");
+    }
+
+    public function verify(): void
+    {
+        foreach ($this->wrappers as $wrapper) {
+            if ($wrapper instanceof MockedMethod) {
+                $wrapper->verify();
+            }
+        }
+    }
+
+    public function registerDefaultWrappers(): void
+    {
+        $this->wrapperRegistry->addWrapper(function ($method, $args) {
+            $mocked = new MockedMethod($method, $args);
+            $stubbed = new StubbedMethod($method, $args);
+            $mocked->registerMatchers($this->matcherRegistry);
+            return new CompositeDoubledMethod($mocked, $stubbed);
+        });
+    }
+
+    private function registerDefaultMatchers(): void
+    {
+        $this->matcherRegistry->addMatcher(new ShouldBeCalledMatcher());
+        $this->matcherRegistry->addMatcher(new ShouldNotBeCalledMatcher());
     }
 }

@@ -1,12 +1,11 @@
 <?php
 
-namespace Phpspec\Mock;
+namespace PhpSpec\Mock;
+
+use PhpSpec\Mock\Wrapper\DoubledMethod;
 
 class Doubler
 {
-    /**
-     * @var DoubledMethod[]
-     */
     private iterable $doubledMethods = [];
 
     public function addDoubledMethod(DoubledMethod $doubledMethod): void
@@ -14,21 +13,15 @@ class Doubler
         $this->doubledMethods[] = $doubledMethod;
     }
 
-    public function call($name, $arguments)
+    public function call(string $name, array $arguments): mixed
     {
         foreach ($this->doubledMethods as $doubledMethod) {
 
             if ($doubledMethod->satisfies($name, $arguments)) {
-
-                if ($doubledMethod->isThrowing()) {
-                    $doubledMethod->throwException();
-                }
-
-                if ($doubledMethod->hasStubs()) {
-                    return $doubledMethod->stubbedValue();
-                }
+                return $doubledMethod->call($name, $arguments);
             }
         }
+
         throw new \BadMethodCallException("Method $name was not stubbed");
     }
 }

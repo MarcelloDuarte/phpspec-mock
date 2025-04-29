@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpspec\Mock\CodeGeneration;
+namespace PhpSpec\Mock\CodeGeneration;
 
 class ClassGenerator
 {
@@ -9,28 +9,18 @@ class ClassGenerator
         return <<<CODE
 class $className $extendsOrImplements
 {
-    private \\Phpspec\\Mock\\Doubler \$doubler;
+    private \\PhpSpec\\Mock\\Doubler \$doubler;
 
     public function __construct()
     {
-        \$this->doubler = new \\Phpspec\\Mock\\Doubler();
+        \$this->doubler = new \\PhpSpec\\Mock\\Doubler();
     }
 
-    $methods
+$methods
 
-    public function __setMode(\\Phpspec\\Mock\\DoubleMode \$mode): void
+    public function addDoubledMethod(\\PhpSpec\\Mock\\Wrapper\\DoubledMethod \$doubledMethod): void
     {
-        \$this->doubler->mode = \$mode;
-    }
-
-    public function __getMode(): \\Phpspec\\Mock\\DoubleMode
-    {
-        return \$this->doubler->mode;
-    }
-
-    public function getDoubler(): \\Phpspec\\Mock\\Doubler
-    {
-        return \$this->doubler;
+        \$this->doubler->addDoubledMethod(\$doubledMethod);
     }
 }
 CODE;
