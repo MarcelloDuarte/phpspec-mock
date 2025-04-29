@@ -71,7 +71,7 @@ final class DoubleConfiguration
         }
     }
 
-    public function registerDefaultWrappers(): void
+    private function registerDefaultWrappers(): void
     {
         $this->wrapperRegistry->addWrapper(function ($method, $args) {
             $mocked = new MockedMethod($method, $args);
