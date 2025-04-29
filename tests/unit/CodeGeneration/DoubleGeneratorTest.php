@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Phpspec\Mock\CodeGeneration;
+namespace Tests\PhpSpec\Mock\CodeGeneration;
 
-use Phpspec\Mock\CollaboratorClassDoesNotExistException;
+use PhpSpec\Mock\CollaboratorClassDoesNotExistException;
 use PHPUnit\Framework\TestCase;
-use Phpspec\Mock\CodeGeneration\DoubleGenerator;
+use PhpSpec\Mock\CodeGeneration\DoubleGenerator;
 
 class DoubleGeneratorTest extends TestCase
 {
@@ -13,7 +13,7 @@ class DoubleGeneratorTest extends TestCase
         $generator = new DoubleGenerator();
         [$code, $className] = $generator->generate(SomeInterface::class);
 
-        $this->assertStringContainsString("class $className implements Tests\\Phpspec\\Mock\\CodeGeneration\\SomeInterface", $code);
+        $this->assertStringContainsString("class $className implements Tests\\PhpSpec\\Mock\\CodeGeneration\\SomeInterface", $code);
         $this->assertStringContainsString('public function someMethod()', $code);
     }
 

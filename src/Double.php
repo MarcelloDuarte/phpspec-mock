@@ -1,8 +1,8 @@
 <?php
 
-namespace Phpspec\Mock;
+namespace PhpSpec\Mock;
 
-use Phpspec\Mock\CodeGeneration\DoubleGenerator;
+use PhpSpec\Mock\CodeGeneration\DoubleGenerator;
 
 final readonly class Double
 {

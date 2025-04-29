@@ -1,8 +1,8 @@
 <?php
 
-namespace Phpspec\Mock\CodeGeneration;
+namespace PhpSpec\Mock\CodeGeneration;
 
-use Phpspec\Mock\CollaboratorClassDoesNotExistException;
+use PhpSpec\Mock\CollaboratorClassDoesNotExistException;
 use ReflectionClass;
 
 class DoubleGenerator
@@ -51,7 +51,7 @@ class DoubleGenerator
     private function getExtendsOrImplements(?string $name): string
     {
         if ($name === null) {
-            return ' implements \\Phpspec\\Mock\\DoubleInterface';
+            return ' implements \\PhpSpec\\Mock\\DoubleInterface';
         }
 
         try {
@@ -62,12 +62,12 @@ class DoubleGenerator
             }
 
             if ($reflection->isInterface()) {
-                return "implements $name, \\Phpspec\\Mock\\DoubleInterface";
+                return "implements $name, \\PhpSpec\\Mock\\DoubleInterface";
             }
         } catch (\ReflectionException $e) {
         }
 
-        return "extends $name implements \\Phpspec\\Mock\\DoubleInterface";
+        return "extends $name implements \\PhpSpec\\Mock\\DoubleInterface";
     }
 
     /**

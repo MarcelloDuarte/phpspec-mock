@@ -2,13 +2,13 @@
     "name": "md/phpspec-mock",
     "autoload": {
         "psr-4": {
-            "Phpspec\\Mock\\": "src/"
+            "PhpSpec\\Mock\\": "src/"
 
         }
     },
     "autoload-dev:": {
         "psr-4": {
-            "Tests\\Phpspec\\Mock\\": "tests/unit/",
+            "Tests\\PhpSpec\\Mock\\": "tests/unit/",
             "fixtures\\": "tests/fixtures"
         }
     },

@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\Phpspec\Mock;
+namespace Tests\PhpSpec\Mock;
 
-use Phpspec\Mock\DoubledMethod;
+use PhpSpec\Mock\StubbedMethod;
 use PHPUnit\Framework\TestCase;
-use Phpspec\Mock\Double;
+use PhpSpec\Mock\Double;
 
 class DoubleConfigurationTest extends TestCase
 {
     function testCallingAnyMethodOnDoubleConfigurationReturnsDoubledMethod()
     {
         $double = Double::create(SomeOtherClass::class);
-        $this->assertInstanceOf(DoubledMethod::class, $double->someMethod(42));
+        $this->assertInstanceOf(StubbedMethod::class, $double->someMethod(42));
     }
 }
 

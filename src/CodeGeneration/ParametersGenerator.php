@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpspec\Mock\CodeGeneration;
+namespace PhpSpec\Mock\CodeGeneration;
 
 class ParametersGenerator
 {

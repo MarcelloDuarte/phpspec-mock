@@ -1,11 +1,14 @@
 <?php
 
-namespace Phpspec\Mock;
+namespace PhpSpec\Mock;
 
-use Phpspec\Mock\DoubleInterface as DoubleObject;
+use PhpSpec\Mock\DoubleInterface as DoubleObject;
 
-readonly final class DoubleConfiguration
+final class DoubleConfiguration
 {
+    private array $stubbedMethods = [];
+    private array $mockedMethods = [];
+
     public function __construct(private DoubleObject $double)
     {
     }
@@ -25,10 +28,24 @@ readonly final class DoubleConfiguration
         return $this->double;
     }
 
-    public function __call(string $method, array $args): DoubledMethod
+    public function __call(string $methodName, array $arguments = []): StubbedMethod
     {
-        $doubledMethod = new DoubledMethod($method, $args);
-        $this->double->getDoubler()->addDoubledMethod($doubledMethod);
-        return $doubledMethod;
+        $stubbedMethod = new StubbedMethod($methodName, $arguments);
+        $mockedMethod = new MockedMethod($methodName, $arguments);
+
+        $this->stubbedMethods[] = $stubbedMethod;
+        $this->mockedMethods[] = $mockedMethod;
+
+        $this->double->getDoubler()->addDoubledMethod($stubbedMethod);
+        $this->double->getDoubler()->addDoubledMethod($mockedMethod);
+
+        return $stubbedMethod;
+    }
+
+    public function verify(): void
+    {
+        foreach ($this->mockedMethods as $mockedMethod) {
+            $mockedMethod->verify();
+        }
     }
 }

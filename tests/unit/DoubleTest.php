@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Phpspec\Mock;
+namespace Tests\PhpSpec\Mock;
 
-use Phpspec\Mock\DoubleConfiguration;
-use Phpspec\Mock\Double;
+use PhpSpec\Mock\DoubleConfiguration;
+use PhpSpec\Mock\Double;
 use PHPUnit\Framework\TestCase;
 
 class DoubleTest extends TestCase

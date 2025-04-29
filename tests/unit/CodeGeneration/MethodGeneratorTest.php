@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Phpspec\Mock\CodeGeneration;
+namespace Tests\PhpSpec\Mock\CodeGeneration;
 
-use Phpspec\Mock\CodeGeneration\ParametersGenerator;
+use PhpSpec\Mock\CodeGeneration\ParametersGenerator;
 use PHPUnit\Framework\TestCase;
-use Phpspec\Mock\CodeGeneration\MethodGenerator;
+use PhpSpec\Mock\CodeGeneration\MethodGenerator;
 
 class MethodGeneratorTest extends TestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Phpspec\Mock\CodeGeneration;
+namespace Tests\PhpSpec\Mock\CodeGeneration;
 
 use PHPUnit\Framework\TestCase;
-use Phpspec\Mock\CodeGeneration\ParametersGenerator;
+use PhpSpec\Mock\CodeGeneration\ParametersGenerator;
 
 class ParametersGeneratorTest extends TestCase
 {
