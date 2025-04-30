@@ -2,8 +2,10 @@
 
 namespace Tests\PhpSpec\Mock;
 
+use PhpSpec\Mock\Argument;
 use PhpSpec\Mock\DoubleConfiguration;
 use PhpSpec\Mock\Double;
+use PhpSpec\Mock\Matcher\ExpectationException;
 use PHPUnit\Framework\TestCase;
 
 class DoubleTest extends TestCase
@@ -42,6 +44,24 @@ class DoubleTest extends TestCase
 
         $this->assertInstanceOf(ReadonlyClass::class, $instance);
         $this->assertSame('stubbed', $instance->getName());
+    }
+
+    public function testDiffFailureShowsMismatch()
+    {
+        $this->expectException(ExpectationException::class);
+        $this->expectExceptionMessage('No stubbed value found for method "someMethod()" with arguments:
+  Called with: ["bar"]
+  Known stubs:
+    - someMethod(["foo"])');
+
+        $mock = Double::create(SomeService::class);
+        $mock->someMethod(Argument::exact('foo'))->shouldBeCalled();
+
+        $instance = $mock->stub();
+        $instance->someMethod('bar'); // wrong argument
+
+
+        $mock->verify(); // this should fail
     }
 }
 

@@ -6,4 +6,5 @@ interface ArgumentMatcherInterface extends MatcherInterface
 {
     public function matches(mixed $actual): bool;
     public function isVariadic(): bool;
+    public function __toString(): string;
 }

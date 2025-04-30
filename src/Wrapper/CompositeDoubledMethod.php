@@ -77,4 +77,9 @@ final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
     {
         $this->metadata = $metadata;
     }
+
+    public function getExpectedArgs(): array
+    {
+        return $this->stub->getExpectedArgs();
+    }
 }

@@ -18,4 +18,9 @@ final class AnyMatcher implements ArgumentMatcherInterface
     {
         return false;
     }
+
+    public function __toString(): string
+    {
+        return '<any>';
+    }
 }

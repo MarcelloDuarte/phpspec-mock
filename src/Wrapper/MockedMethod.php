@@ -96,4 +96,9 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
     {
         $this->metadata = $metadata;
     }
+
+    public function getExpectedArgs(): array
+    {
+        return $this->arguments;
+    }
 }

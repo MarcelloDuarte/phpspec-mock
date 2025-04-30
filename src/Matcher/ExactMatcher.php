@@ -20,4 +20,9 @@ final class ExactMatcher implements ArgumentMatcherInterface
     {
         return false;
     }
+
+    public function __toString(): string
+    {
+        return json_encode($this->expected);
+    }
 }

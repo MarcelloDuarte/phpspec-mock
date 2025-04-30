@@ -138,4 +138,9 @@ final class StubbedMethod implements DoubledMethod, ObjectWrapper
     {
         $this->metadata = $metadata;
     }
+
+    public function getExpectedArgs(): array
+    {
+        return $this->arguments;
+    }
 }

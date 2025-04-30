@@ -6,6 +6,7 @@ use BadMethodCallException;
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Double;
 use PhpSpec\Mock\Doubler;
+use PhpSpec\Mock\Matcher\ExpectationException;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
 use PhpSpec\Mock\Wrapper\MockedMethod;
@@ -49,8 +50,10 @@ class DoublerTest extends TestCase
 
     public function testItThrowsExceptionWhenMethodIsNotStubbedOrMocked()
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Method unknownMethod was not stubbed');
+        $this->expectException(ExpectationException::class);
+        $this->expectExceptionMessage('No stubbed value found for method "unknownMethod()" with arguments:
+  Called with: []
+  Known stubs:');
 
         $doubler = new Doubler();
         $doubler->call('unknownMethod', []);

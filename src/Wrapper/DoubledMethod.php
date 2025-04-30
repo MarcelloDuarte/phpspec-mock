@@ -10,6 +10,6 @@ interface DoubledMethod
     public function satisfies(string $methodName, array $arguments): bool;
     public function call(string $name, array $arguments);
     public function registerMatchers(MatcherRegistry $registry): void;
-
     public function setMetadata(MethodMetadata $metadata);
+    public function getExpectedArgs(): array;
 }
