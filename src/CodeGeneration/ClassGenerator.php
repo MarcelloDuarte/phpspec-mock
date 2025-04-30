@@ -18,9 +18,12 @@ class $className $extendsOrImplements
 
 $methods
 
-    public function addDoubledMethod(\\PhpSpec\\Mock\\Wrapper\\DoubledMethod \$doubledMethod): void
+    public function addDoubledMethod(
+        \\PhpSpec\\Mock\\Wrapper\\DoubledMethod \$doubledMethod,
+        \\PhpSpec\\Mock\\CodeGeneration\\MethodMetadata \$metadata
+    ): void
     {
-        \$this->doubler->addDoubledMethod(\$doubledMethod);
+        \$this->doubler->addDoubledMethod(\$doubledMethod, \$metadata);
     }
 }
 CODE;

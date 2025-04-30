@@ -3,6 +3,7 @@
 namespace PhpSpec\Mock\Wrapper;
 
 
+use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
@@ -13,6 +14,7 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
     private array $calls = [];
     private array $matchers = [];
     private array $expectations = [];
+    private ?MethodMetadata $metadata = null;
 
     public function __construct(private string $name, private readonly array $arguments = [])
     {}
@@ -88,5 +90,10 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
     public function getMethodName(): string
     {
         return $this->name;
+    }
+
+    public function setMetadata(MethodMetadata $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace PhpSpec\Mock;
 
+use PhpSpec\Mock\CodeGeneration\MethodGenerator;
 use PhpSpec\Mock\DoubleInterface as DoubleObject;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
@@ -20,6 +21,7 @@ final class DoubleConfiguration
         private readonly DoubleObject $double,
         private ?WrapperRegistry $wrapperRegistry = null,
         private ?MatcherRegistry $matcherRegistry = null,
+        private readonly array $metadata = [],
     )
     {
         $this->wrapperRegistry ??= new WrapperRegistry();
@@ -94,7 +96,7 @@ final class DoubleConfiguration
             $method = $factory($methodName, $arguments);
 
             $this->wrappers[] = $method;
-            $this->double->addDoubledMethod($method);
+            $this->double->addDoubledMethod($method, $this->metadata[$methodName]);
 
             return $method;
         }

@@ -2,11 +2,14 @@
 
 namespace PhpSpec\Mock\Wrapper;
 
+use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 
 final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
 {
+    private ?MethodMetadata $metadata = null;
+
     public function __construct(
         private readonly MockedMethod $mock,
         private readonly StubbedMethod $stub
@@ -68,5 +71,10 @@ final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
     public function getMethodName(): string
     {
         return $this->mock->getMethodName();
+    }
+
+    public function setMetadata(MethodMetadata $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }

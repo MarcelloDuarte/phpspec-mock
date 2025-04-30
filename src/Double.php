@@ -21,14 +21,15 @@ final readonly class Double
         ?WrapperRegistry $wrappers = null
     ): DoubleConfiguration
     {
-        [$classCode, $className] = new DoubleGenerator()->generate($name);
+        [$classCode, $className, $metadata] = new DoubleGenerator()->generate($name);
 
         eval($classCode);
 
         return new DoubleConfiguration(
             new $className(),
             $matchers,
-            $wrappers
+            $wrappers,
+            $metadata
         );
     }
 }

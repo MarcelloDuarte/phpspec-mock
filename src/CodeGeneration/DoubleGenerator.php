@@ -30,6 +30,7 @@ class DoubleGenerator
         $extendsOrImplements = $this->getExtendsOrImplements($name);
 
         $methodsCode = '';
+        $methodsMetadata = [];
         if ($name !== null) {
             try {
                 $reflection = new ReflectionClass($name);
@@ -38,14 +39,16 @@ class DoubleGenerator
             }
             foreach ($reflection->getMethods() as $method) {
                 if ($method->isPublic() && !$method->isConstructor()) {
-                    $methodsCode .= $this->generateMethod($method);
+                    [$metadata, $code] = $this->generateMethod($method);
+                    $methodsCode .= $code;
+                    $methodsMetadata[$method->getName()] = $metadata;
                 }
             }
         }
 
         $classCode = $this->classGenerator->generate($className, $extendsOrImplements, $methodsCode);
 
-        return [$classCode, $className];
+        return [$classCode, $className, $methodsMetadata];
     }
 
     /**
@@ -76,9 +79,9 @@ class DoubleGenerator
 
     /**
      * @param \ReflectionMethod $method
-     * @return string
+     * @return array [MethodMetadata, string]
      */
-    public function generateMethod(\ReflectionMethod $method): string
+    public function generateMethod(\ReflectionMethod $method): array
     {
         $variables = array_map(fn($p) => ($p->isVariadic() ? '...' : '') . '$' . $p->name, $method->getParameters());
 

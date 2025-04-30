@@ -3,6 +3,7 @@
 namespace Tests\PhpSpec\Mock;
 
 use BadMethodCallException;
+use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Double;
 use PhpSpec\Mock\Doubler;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
@@ -21,7 +22,7 @@ class DoublerTest extends TestCase
         $stubbedMethod = new StubbedMethod('someMethod', [42]);
         $stubbedMethod->willReturn('stubbed value');
 
-        $doubler->addDoubledMethod($stubbedMethod);
+        $doubler->addDoubledMethod($stubbedMethod, new MethodMetadata('someMethod', 'string'));
 
         $this->assertSame('stubbed value', $doubler->call('someMethod', [42]));
     }
@@ -37,7 +38,7 @@ class DoublerTest extends TestCase
         $doubler = new Doubler();
 
         $mockedMethod->shouldBeCalled();
-        $doubler->addDoubledMethod($mockedMethod);
+        $doubler->addDoubledMethod($mockedMethod, new MethodMetadata('someMethod', 'string'));
 
         // No return value expected from MockedMethod directly
         $this->assertNull($doubler->call('someMethod', [42]));
@@ -70,7 +71,7 @@ class DoublerTest extends TestCase
 
         $mockedMethod->shouldBeCalled();
 
-        $doubler->addDoubledMethod($mockedMethod);
+        $doubler->addDoubledMethod($mockedMethod, new MethodMetadata('someMethod', 'string'));
 
         // We do not call it!
 

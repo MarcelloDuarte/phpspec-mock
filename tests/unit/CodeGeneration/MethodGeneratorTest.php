@@ -20,7 +20,7 @@ class MethodGeneratorTest extends TestCase
         $reflection = new \ReflectionMethod(SomeOtherClass::class, 'simpleMethod');
         $body = 'return "stubbed";';
 
-        $generated = $this->generator->generate($reflection, $body);
+        [$_, $generated] = $this->generator->generate($reflection, $body);
 
         $this->assertStringContainsString('public function simpleMethod()', $generated);
         $this->assertStringContainsString($body, $generated);
@@ -31,7 +31,7 @@ class MethodGeneratorTest extends TestCase
         $reflection = new \ReflectionMethod(SomeOtherClass::class, 'methodWithReturnType');
         $body = 'return 42;';
 
-        $generated = $this->generator->generate($reflection, $body);
+        [$_, $generated] = $this->generator->generate($reflection, $body);
 
         $this->assertStringContainsString('public function methodWithReturnType(): int', $generated);
         $this->assertStringContainsString($body, $generated);
@@ -42,7 +42,7 @@ class MethodGeneratorTest extends TestCase
         $reflection = new \ReflectionMethod(SomeOtherClass::class, 'voidMethod');
         $body = '$this->doSomething();';
 
-        $generated = $this->generator->generate($reflection, $body);
+        [$_, $generated] = $this->generator->generate($reflection, $body);
 
         $this->assertStringContainsString('public function voidMethod(): void', $generated);
         $this->assertStringContainsString($body, $generated);

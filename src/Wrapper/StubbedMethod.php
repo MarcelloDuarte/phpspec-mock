@@ -3,6 +3,7 @@
 namespace PhpSpec\Mock\Wrapper;
 
 use Exception;
+use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\AnyArgumentsMatcher;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
@@ -18,6 +19,7 @@ final class StubbedMethod implements DoubledMethod, ObjectWrapper
     ];
 
     private null|Exception|string $exceptionToThrow = null;
+    private ?MethodMetadata $metadata = null;
 
     public function __construct(private string $name, private array $arguments = [])
     {
@@ -25,6 +27,24 @@ final class StubbedMethod implements DoubledMethod, ObjectWrapper
 
     public function willReturn(...$returnValues): void
     {
+        if ($this->metadata instanceof MethodMetadata) {
+            if ($this->metadata->noReturnAllowed()) {
+                throw new \RuntimeException(sprintf(
+                    'Cannot stub return value for method "%s": it is declared as void or never.',
+                    $this->name
+                ));
+            }
+
+            foreach ($returnValues as $returnValue) {
+                if (! $this->metadata->isValidReturn($returnValue)) {
+                    throw new \RuntimeException(sprintf(
+                        'Cannot stub return value for method "%s": expected %s.',
+                        $this->name,
+                        $this->metadata->getReturnType()
+                    ));
+                }
+            }
+        }
         $this->stubs = $returnValues;
     }
 
@@ -112,5 +132,10 @@ final class StubbedMethod implements DoubledMethod, ObjectWrapper
     public function registerMatchers(MatcherRegistry $registry): void
     {
         // No-op for stubs
+    }
+
+    public function setMetadata(MethodMetadata $metadata)
+    {
+        $this->metadata = $metadata;
     }
 }
