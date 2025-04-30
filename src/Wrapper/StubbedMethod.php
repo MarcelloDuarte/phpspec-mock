@@ -3,15 +3,25 @@
 namespace PhpSpec\Mock\Wrapper;
 
 use Exception;
+use PhpSpec\Mock\Matcher\AnyArgumentsMatcher;
+use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 
 final class StubbedMethod implements DoubledMethod, ObjectWrapper
 {
     private array $stubs = [];
+    private const string WILL_RETURN = 'willReturn';
+    private const string WILL_THROW = 'willThrow';
+    private const array CONFIGURATION_METHODS = [
+        StubbedMethod::WILL_RETURN,
+        StubbedMethod::WILL_THROW
+    ];
+
     private null|Exception|string $exceptionToThrow = null;
 
     public function __construct(private string $name, private array $arguments = [])
-    {}
+    {
+    }
 
     public function willReturn(...$returnValues): void
     {
@@ -23,9 +33,39 @@ final class StubbedMethod implements DoubledMethod, ObjectWrapper
         $this->exceptionToThrow = $exception;
     }
 
+    public function isConfigurationMethod(string $name): bool
+    {
+        return in_array($name, StubbedMethod::CONFIGURATION_METHODS);
+    }
+
     public function satisfies(string $methodName, array $arguments = []): bool
     {
-        return $methodName === $this->name && $arguments == $this->arguments;
+        if ($methodName !== $this->name) {
+            return false;
+        }
+
+        $expected = $this->arguments;
+        $actual = $arguments;
+
+        foreach ($expected as $i => $matcher) {
+            if (!array_key_exists($i, $actual)) {
+                return false;
+            }
+
+            if ($matcher instanceof ArgumentMatcherInterface) {
+                if ($matcher->isVariadic()) {
+                    return true;
+                }
+
+                if (!$matcher->matches($actual[$i])) {
+                    return false;
+                }
+            } elseif ($matcher !== $actual[$i]) {
+                return false;
+            }
+        }
+
+        return count($actual) <= count($expected);
     }
 
     public function hasStubs(): bool

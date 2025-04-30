@@ -3,6 +3,7 @@
 namespace PhpSpec\Mock\Wrapper;
 
 
+use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
@@ -35,7 +36,29 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
 
     public function satisfies(string $methodName, array $arguments = []): bool
     {
-        return $methodName === $this->name && $arguments == $this->arguments;
+        if ($methodName !== $this->name) {
+            return false;
+        }
+
+        if (count($this->arguments) === 1 && $this->arguments[0] instanceof \PhpSpec\Mock\Matcher\AnyArgumentsMatcher) {
+            return true; // Match any arguments
+        }
+
+        if (count($arguments) !== count($this->arguments)) {
+            return false;
+        }
+
+        foreach ($this->arguments as $i => $expected) {
+            if ($expected instanceof \PhpSpec\Mock\Matcher\ArgumentMatcherInterface) {
+                if (!$expected->matches($arguments[$i])) {
+                    return false;
+                }
+            } elseif ($expected !== $arguments[$i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function verify(): void
