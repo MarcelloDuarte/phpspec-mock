@@ -4,7 +4,6 @@ namespace PhpSpec\Mock\Wrapper;
 
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
-use RuntimeException;
 
 final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
 {
@@ -36,14 +35,29 @@ final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
 
     public function __call(string $name, array $arguments): mixed
     {
-        try {
-            return $this->mock->__call($name, $arguments);
-        } catch (\BadMethodCallException) {
-            if (method_exists($this->stub, $name)) {
-                return $this->stub->$name(...$arguments);
-            }
-            throw new \RuntimeException("Method $name not handled by CompositeDoubledMethod");
+        // Check if the mock accepts this method (e.g. shouldBeCalled)
+        if (method_exists($this->mock, $name)) {
+            $this->mock->$name(...$arguments);
+            return $this;
         }
+
+        // Check if the stub accepts this method (e.g. willReturn)
+        if (method_exists($this->stub, $name)) {
+            if ($this->stub->isConfigurationMethod($name)) {
+                $this->stub->$name(...$arguments);
+                return $this;
+            }
+        }
+
+        // Last resort: try __call on the mock, in case it's a matcher method
+        try {
+            $this->mock->__call($name, $arguments);
+            return $this;
+        } catch (\BadMethodCallException) {
+            // fall through
+        }
+
+        throw new \RuntimeException("Method $name not handled by CompositeDoubledMethod");
     }
 
     public function getCalls(): array
