@@ -132,6 +132,7 @@ MIT License.
 - [x] Helper functions (in progress)
 - [x] Internal mocks for framework self-testing (in progress)
 - [x] Readme started (this file!)
-- [ ] Argument matching
+- [x] Argument matching
+- [x] Can mock readonly classes
 - [ ] Behaviour chaining (willReturnOnConsecutiveCalls)
 - [ ] More detailed error reporting (diffs)
