@@ -109,6 +109,20 @@ class StubbedMethodTest extends TestCase
 
         $this->expectNotToPerformAssertions(); // no exception means pass
     }
+
+    public function testAllowsAnyReturnWhenNoTypeDeclared()
+    {
+        $method = new StubbedMethod('anything');
+        $method->setMetadata(new MethodMetadata('anything', null)); // 👈 no return type
+
+        // All of these should be valid
+        $method->willReturn('string');
+        $method->willReturn(123);
+        $method->willReturn(null);
+        $method->willReturn(new \stdClass());
+
+        $this->expectNotToPerformAssertions(); // all return values allowed
+    }
 }
 
 class ExpectedClass {}

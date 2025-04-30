@@ -20,7 +20,7 @@ class MethodGenerator
         $metadata = new MethodMetadata(
             $methodName, $method->hasReturnType() ?
                 $method->getReturnType()->getName() :
-                ''
+                null
         );
         $returnType = $method->hasReturnType() ? ': ' . $this->getTypeDeclaration($method->getReturnType()) : '';
 

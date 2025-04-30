@@ -6,7 +6,7 @@ class MethodMetadata
 {
     public function __construct(
         private readonly string $name,
-        private readonly string $returnType,
+        private readonly ?string $returnType,
     )
     {
     }
