@@ -4,9 +4,18 @@ namespace PhpSpec\Mock\CodeGeneration;
 
 class ClassGenerator
 {
-    public function generate(string $className, string $extendsOrImplements, string $methods): string
+    public function generate(
+        string $className,
+        string $extendsOrImplements,
+        string $methods,
+        bool $isReadOnly = false
+    ): string
     {
-        return <<<CODE
+        $readOnly = '';
+        if ($isReadOnly) {
+            $readOnly = 'readonly ';
+        }
+        return $readOnly . <<<CODE
 class $className $extendsOrImplements
 {
     private \\PhpSpec\\Mock\\Doubler \$doubler;

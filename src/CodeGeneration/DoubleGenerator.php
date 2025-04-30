@@ -46,7 +46,12 @@ class DoubleGenerator
             }
         }
 
-        $classCode = $this->classGenerator->generate($className, $extendsOrImplements, $methodsCode);
+        $classCode = $this->classGenerator->generate(
+            $className,
+            $extendsOrImplements,
+            $methodsCode,
+            $reflection?->isReadOnly() ?? false
+        );
 
         return [$classCode, $className, $methodsMetadata];
     }

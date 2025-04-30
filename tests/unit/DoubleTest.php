@@ -31,6 +31,18 @@ class DoubleTest extends TestCase
         $double = Double::create(SomeInterface::class);
         $this->assertInstanceOf(SomeInterface::class, $double->stub());
     }
+
+    public function testItCanDoubleReadonlyClass()
+    {
+        $double = Double::create(ReadonlyClass::class);
+
+        $double->getName()->willReturn('stubbed');
+
+        $instance = $double->stub();
+
+        $this->assertInstanceOf(ReadonlyClass::class, $instance);
+        $this->assertSame('stubbed', $instance->getName());
+    }
 }
 
 class SomeClass
@@ -39,3 +51,13 @@ class SomeClass
 }
 
 interface SomeInterface {}
+
+readonly class ReadonlyClass
+{
+    public function __construct(public string $name = 'default') {}
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+}
