@@ -135,4 +135,4 @@ MIT License.
 - [x] Argument matching
 - [x] Can mock readonly classes
 - [ ] Behaviour chaining (willReturnOnConsecutiveCalls)
-- [ ] More detailed error reporting (diffs)
+- [x] More detailed error reporting (diffs)
