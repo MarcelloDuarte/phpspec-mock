@@ -45,21 +45,12 @@ final class DoubleConfiguration
 
     public function __call(string $methodName, array $arguments = []): DoubledMethod
     {
-        foreach ($this->wrappers as $existingWrapper) {
-            if ($existingWrapper->satisfies($methodName, $arguments)) {
-                return $existingWrapper;
-            }
+        $existing = $this->findConfiguredMethod($methodName, $arguments);
+        if ($existing !== null) {
+            return $existing;
         }
 
-        foreach ($this->wrapperRegistry->all() as $wrapper) {
-            $doubledMethod = $wrapper($methodName, $arguments);
-            $this->wrappers[] = $doubledMethod;
-            $this->double->addDoubledMethod($doubledMethod);
-
-            return $doubledMethod;
-        }
-
-        throw new \RuntimeException("Method $methodName does not exist");
+        return $this->configureNewMethod($methodName, $arguments);
     }
 
     public function verify(): void
@@ -85,5 +76,29 @@ final class DoubleConfiguration
     {
         $this->matcherRegistry->addMatcher(new ShouldBeCalledMatcher());
         $this->matcherRegistry->addMatcher(new ShouldNotBeCalledMatcher());
+    }
+
+    private function findConfiguredMethod(string $methodName, array $arguments): ?DoubledMethod
+    {
+        foreach ($this->wrappers as $method) {
+            if ($method->satisfies($methodName, $arguments)) {
+                return $method;
+            }
+        }
+        return null;
+    }
+
+    private function configureNewMethod(string $methodName, array $arguments): DoubledMethod
+    {
+        foreach ($this->wrapperRegistry->all() as $factory) {
+            $method = $factory($methodName, $arguments);
+
+            $this->wrappers[] = $method;
+            $this->double->addDoubledMethod($method);
+
+            return $method;
+        }
+
+        throw new \RuntimeException("Method $methodName does not exist");
     }
 }
