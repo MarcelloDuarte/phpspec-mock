@@ -2,7 +2,7 @@
 
 namespace PhpSpec\Mock\CodeGeneration;
 
-use PhpSpec\Mock\CollaboratorClassDoesNotExistException;
+use PhpSpec\Mock\Double\CollaboratorClassDoesNotExistException;
 use ReflectionClass;
 
 class DoubleGenerator

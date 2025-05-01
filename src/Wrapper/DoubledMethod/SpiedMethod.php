@@ -1,23 +1,31 @@
 <?php
 
-namespace PhpSpec\Mock\Wrapper;
-
+namespace PhpSpec\Mock\Wrapper\DoubledMethod;
 
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
-use PhpSpec\Mock\Matcher\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
+use PhpSpec\Mock\Wrapper\DoubledMethod;
+use PhpSpec\Mock\Wrapper\Matchable;
+use PhpSpec\Mock\Wrapper\ObjectWrapper;
 
-final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, Matchable
+final class SpiedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, Matchable
 {
     private array $calls = [];
     private array $matchers = [];
     private array $expectations = [];
     private ?MethodMetadata $metadata = null;
 
-    public function __construct(private string $name, private readonly array $arguments = [])
-    {}
+    public function __construct(
+        private string $name,
+        private readonly array $arguments = [],
+        private ?MatcherRunner $runner = null
+    ) {
+        $this->runner ??= new MatcherRunner();
+    }
 
     public function __call($method, $arguments)
     {
@@ -75,7 +83,7 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, 
         }
     }
 
-    public function call(string $name, array $arguments)
+    public function call(string $name, array $arguments): void
     {
         $this->recordCall($arguments);
     }
@@ -95,7 +103,7 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, 
         return $this->name;
     }
 
-    public function setMetadata(MethodMetadata $metadata)
+    public function setMetadata(MethodMetadata $metadata): void
     {
         $this->metadata = $metadata;
     }

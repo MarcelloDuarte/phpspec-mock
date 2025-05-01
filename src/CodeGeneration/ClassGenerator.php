@@ -18,11 +18,11 @@ class ClassGenerator
         return $readOnly . <<<CODE
 class $className $extendsOrImplements
 {
-    private \\PhpSpec\\Mock\\Doubler \$doubler;
+    private \\PhpSpec\\Mock\\Double\\Doubler \$doubler;
 
     public function __construct()
     {
-        \$this->doubler = new \\PhpSpec\\Mock\\Doubler();
+        \$this->doubler = new \\PhpSpec\\Mock\\Double\\Doubler();
     }
 
 $methods

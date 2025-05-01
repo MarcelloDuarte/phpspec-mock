@@ -13,7 +13,7 @@ class ClassGeneratorTest extends TestCase
         $code = $generator->generate('SomeClass', 'implements SomeInterface', '// some methods');
 
         $this->assertStringContainsString('class SomeClass implements SomeInterface', $code);
-        $this->assertStringContainsString('private \\PhpSpec\\Mock\\Doubler $doubler;', $code);
+        $this->assertStringContainsString('private \\PhpSpec\\Mock\\Double\\Doubler $doubler;', $code);
         $this->assertStringContainsString('// some methods', $code);
     }
 }

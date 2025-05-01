@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSpec\Mock;
+namespace PhpSpec\Mock\Double;
 
 class CollaboratorClassDoesNotExistException extends \Exception
 {

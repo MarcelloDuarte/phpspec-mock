@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSpec\Mock\Wrapper;
+namespace PhpSpec\Mock\Wrapper\Registry;
 
 class WrapperRegistry
 {

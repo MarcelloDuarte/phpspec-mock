@@ -2,7 +2,7 @@
 
 namespace PhpSpec\Mock\Wrapper;
 
-use PhpSpec\Mock\Matcher\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
 
 interface Matchable
 {

@@ -2,9 +2,9 @@
 
 namespace Tests\PhpSpec\Mock\CodeGeneration;
 
-use PhpSpec\Mock\CollaboratorClassDoesNotExistException;
-use PHPUnit\Framework\TestCase;
 use PhpSpec\Mock\CodeGeneration\DoubleGenerator;
+use PhpSpec\Mock\Double\CollaboratorClassDoesNotExistException;
+use PHPUnit\Framework\TestCase;
 
 class DoubleGeneratorTest extends TestCase
 {

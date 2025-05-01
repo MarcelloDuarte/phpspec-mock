@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\PhpSpec\Mock\Wrapper;
+namespace Tests\PhpSpec\Mock\Wrapper\DoubledMethod;
 
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
-use PhpSpec\Mock\Wrapper\StubbedMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod\StubbedMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -90,7 +90,7 @@ class StubbedMethodTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(
-            'Cannot stub return value for method "load": expected Tests\PhpSpec\Mock\Wrapper\ExpectedClass'
+            'Cannot stub return value for method "load": expected Tests\PhpSpec\Mock\Wrapper\DoubledMethod\ExpectedClass'
         );
 
         $method = new StubbedMethod('load');

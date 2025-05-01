@@ -1,10 +1,13 @@
 <?php
 
-namespace PhpSpec\Mock\Wrapper;
+namespace PhpSpec\Mock\Wrapper\DoubledMethod;
 
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\CallRecorder;
-use PhpSpec\Mock\Matcher\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Wrapper\DoubledMethod;
+use PhpSpec\Mock\Wrapper\Matchable;
+use PhpSpec\Mock\Wrapper\Satisfiable;
 
 final class CompositeDoubledMethod implements DoubledMethod
 {

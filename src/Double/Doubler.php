@@ -1,12 +1,11 @@
 <?php
 
-namespace PhpSpec\Mock;
+namespace PhpSpec\Mock\Double;
 
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
-use PhpSpec\Mock\Matcher\ExpectationException;
+use PhpSpec\Mock\Matcher\Expectation\ExpectationException;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
-use PhpSpec\Mock\Wrapper\Satisfiable;
 
 class Doubler
 {

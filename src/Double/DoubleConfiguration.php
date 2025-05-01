@@ -1,17 +1,17 @@
 <?php
 
-namespace PhpSpec\Mock;
+namespace PhpSpec\Mock\Double;
 
-use PhpSpec\Mock\CodeGeneration\MethodGenerator;
 use PhpSpec\Mock\DoubleInterface as DoubleObject;
-use PhpSpec\Mock\Matcher\MatcherRegistry;
-use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
-use PhpSpec\Mock\Matcher\ShouldNotBeCalledMatcher;
-use PhpSpec\Mock\Wrapper\CompositeDoubledMethod;
+use PhpSpec\Mock\Matcher\Method\BeCalledMatcher;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
-use PhpSpec\Mock\Wrapper\MockedMethod;
-use PhpSpec\Mock\Wrapper\StubbedMethod;
-use PhpSpec\Mock\Wrapper\WrapperRegistry;
+use PhpSpec\Mock\Wrapper\DoubledMethod\CompositeDoubledMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod\MockedMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod\SpiedMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod\StubbedMethod;
+use PhpSpec\Mock\Wrapper\Registry\WrapperRegistry;
 
 final class DoubleConfiguration
 {
@@ -67,17 +67,18 @@ final class DoubleConfiguration
     private function registerDefaultWrappers(): void
     {
         $this->wrapperRegistry->addWrapper(function ($method, $args) {
-            $mocked = new MockedMethod($method, $args);
+            static $runner = new MatcherRunner();
+            $mocked = new MockedMethod($method, $args, $runner);
+            $spied = new SpiedMethod($method, $args, $runner);
             $stubbed = new StubbedMethod($method, $args);
             $mocked->registerMatchers($this->matcherRegistry);
-            return new CompositeDoubledMethod($mocked, $stubbed);
+            return new CompositeDoubledMethod($mocked, $spied, $stubbed);
         });
     }
 
     private function registerDefaultMatchers(): void
     {
-        $this->matcherRegistry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
-        $this->matcherRegistry->addMatcher(MockedMethod::class, new ShouldNotBeCalledMatcher());
+        $this->matcherRegistry->addMatcher(MockedMethod::class, new BeCalledMatcher());
     }
 
     private function findConfiguredMethod(string $methodName, array $arguments): ?DoubledMethod

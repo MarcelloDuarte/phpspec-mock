@@ -1,10 +1,9 @@
 <?php
 
-namespace Tests\PhpSpec\Mock;
+namespace Tests\PhpSpec\Mock\Double;
 
 use PhpSpec\Mock\Double;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
-use PhpSpec\Mock\Wrapper\StubbedMethod;
 use PHPUnit\Framework\TestCase;
 
 class DoubleConfigurationTest extends TestCase

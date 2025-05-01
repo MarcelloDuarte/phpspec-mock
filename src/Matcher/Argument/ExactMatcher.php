@@ -1,6 +1,8 @@
 <?php
 
-namespace PhpSpec\Mock\Matcher;
+namespace PhpSpec\Mock\Matcher\Argument;
+
+use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 
 final class ExactMatcher implements ArgumentMatcherInterface
 {

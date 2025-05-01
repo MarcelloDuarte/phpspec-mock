@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\PhpSpec\Mock\Wrapper;
+namespace Tests\PhpSpec\Mock\Wrapper\DoubledMethod;
 
-use PhpSpec\Mock\Matcher\MatcherRegistry;
-use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
-use PhpSpec\Mock\Matcher\ShouldNotBeCalledMatcher;
-use PhpSpec\Mock\Wrapper\MockedMethod;
+use PhpSpec\Mock\Matcher\Method\BeCalledMatcher;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
+use PhpSpec\Mock\Wrapper\DoubledMethod\MockedMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -13,7 +13,7 @@ class MockedMethodTest extends TestCase
 {
     public function testItRecordsCalls()
     {
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->recordCall([1, 2]);
 
         $this->expectNotToPerformAssertions(); // No errors = pass
@@ -22,9 +22,9 @@ class MockedMethodTest extends TestCase
     public function testItPassesVerificationIfCalled()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->registerMatchers($registry);
 
         $method->shouldBeCalled();
@@ -40,9 +40,9 @@ class MockedMethodTest extends TestCase
         $this->expectExceptionMessage('Expected method "foo" to be called at least once');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->registerMatchers($registry);
         $method->shouldBeCalled();
         $method->verify();
@@ -51,9 +51,9 @@ class MockedMethodTest extends TestCase
     public function testItPassesWhenCalledExactNumberOfTimes()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->registerMatchers($registry);
 
         $method->shouldBeCalled(2);
@@ -70,9 +70,9 @@ class MockedMethodTest extends TestCase
         $this->expectExceptionMessage('Expected method "foo" to be called 2 times');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->registerMatchers($registry);
         $method->shouldBeCalled(2);
         $method->recordCall([]); // Only once
@@ -83,12 +83,12 @@ class MockedMethodTest extends TestCase
     public function testItFailsIfCalledWhenShouldNotBeCalled()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Expected method "foo" not to be called, but it was called once.');
+        $this->expectExceptionMessage('Expected method "foo" not to be called, but was called once.');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldNotBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $method = new MockedMethod('foo');
+        $method = new MockedMethod('foo', [], new MatcherRunner());
         $method->registerMatchers($registry);
         $method->shouldNotBeCalled();
         $method->recordCall([]);

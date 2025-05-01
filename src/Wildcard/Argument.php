@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpSpec\Mock;
+namespace PhpSpec\Mock\Wildcard;
 
-use PhpSpec\Mock\Matcher\AnyArgumentsMatcher;
-use PhpSpec\Mock\Matcher\AnyMatcher;
-use PhpSpec\Mock\Matcher\ExactMatcher;
+use PhpSpec\Mock\Matcher\Argument\AnyArgumentsMatcher;
+use PhpSpec\Mock\Matcher\Argument\AnyMatcher;
+use PhpSpec\Mock\Matcher\Argument\ExactMatcher;
 
 final class Argument
 {

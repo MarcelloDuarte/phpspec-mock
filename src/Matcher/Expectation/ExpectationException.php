@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSpec\Mock\Matcher;
+namespace PhpSpec\Mock\Matcher\Expectation;
 
 class ExpectationException extends \Exception
 {

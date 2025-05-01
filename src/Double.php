@@ -3,8 +3,10 @@
 namespace PhpSpec\Mock;
 
 use PhpSpec\Mock\CodeGeneration\DoubleGenerator;
-use PhpSpec\Mock\Matcher\MatcherRegistry;
-use PhpSpec\Mock\Wrapper\WrapperRegistry;
+use PhpSpec\Mock\Double\CollaboratorClassDoesNotExistException;
+use PhpSpec\Mock\Double\DoubleConfiguration;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Wrapper\Registry\WrapperRegistry;
 
 final readonly class Double
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace PhpSpec\Mock\Matcher;
+namespace PhpSpec\Mock\Matcher\Registry;
+
+use PhpSpec\Mock\Matcher\MatcherInterface;
 
 final class MatcherRegistry
 {

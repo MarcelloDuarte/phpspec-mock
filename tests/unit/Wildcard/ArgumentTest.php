@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\PhpSpec\Mock;
+namespace Tests\PhpSpec\Mock\Wildcard;
 
-use PhpSpec\Mock\Argument;
 use PhpSpec\Mock\Double;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
+use PhpSpec\Mock\Wildcard\Argument;
 use PHPUnit\Framework\TestCase;
 
 class ArgumentTest extends TestCase

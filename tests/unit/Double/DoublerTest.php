@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\PhpSpec\Mock;
+namespace Tests\PhpSpec\Mock\Double;
 
-use BadMethodCallException;
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Double;
-use PhpSpec\Mock\Doubler;
-use PhpSpec\Mock\Matcher\ExpectationException;
-use PhpSpec\Mock\Matcher\MatcherRegistry;
-use PhpSpec\Mock\Matcher\ShouldBeCalledMatcher;
-use PhpSpec\Mock\Wrapper\MockedMethod;
-use PhpSpec\Mock\Wrapper\StubbedMethod;
+use PhpSpec\Mock\Double\Doubler;
+use PhpSpec\Mock\Matcher\Expectation\ExpectationException;
+use PhpSpec\Mock\Matcher\Method\BeCalledMatcher;
+use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
+use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
+use PhpSpec\Mock\Wrapper\DoubledMethod\MockedMethod;
+use PhpSpec\Mock\Wrapper\DoubledMethod\StubbedMethod;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -31,9 +31,9 @@ class DoublerTest extends TestCase
     public function testItRecordsCallWhenMockedMethodIsCalled()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $mockedMethod = new MockedMethod('someMethod', [42]);
+        $mockedMethod = new MockedMethod('someMethod', [42], new MatcherRunner());
         $mockedMethod->registerMatchers($registry);
 
         $doubler = new Doubler();
@@ -67,9 +67,9 @@ class DoublerTest extends TestCase
         $doubler = new Doubler();
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new BeCalledMatcher());
 
-        $mockedMethod = new MockedMethod('someMethod', [42]);
+        $mockedMethod = new MockedMethod('someMethod', [42], new MatcherRunner());
         $mockedMethod->registerMatchers($registry);
 
         $mockedMethod->shouldBeCalled();

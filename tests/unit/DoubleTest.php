@@ -2,10 +2,10 @@
 
 namespace Tests\PhpSpec\Mock;
 
-use PhpSpec\Mock\Argument;
-use PhpSpec\Mock\DoubleConfiguration;
 use PhpSpec\Mock\Double;
-use PhpSpec\Mock\Matcher\ExpectationException;
+use PhpSpec\Mock\Double\DoubleConfiguration;
+use PhpSpec\Mock\Matcher\Expectation\ExpectationException;
+use PhpSpec\Mock\Wildcard\Argument;
 use PHPUnit\Framework\TestCase;
 
 class DoubleTest extends TestCase
@@ -79,5 +79,11 @@ readonly class ReadonlyClass
     public function getName(): string
     {
         return $this->name;
+    }
+}
+
+class SomeService {
+    public function someMethod($x): string {
+        return 'ok';
     }
 }
