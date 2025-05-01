@@ -55,6 +55,7 @@ class ArgumentTest extends TestCase
     public function testAnyArgumentMatcherMatchesAnyValue()
     {
         $mock = Double::create(SomeOtherService::class);
+
         $mock->someMethod(Argument::any(), Argument::any())
             ->shouldBeCalled()
             ->willReturn('foo');

@@ -22,7 +22,7 @@ class MockedMethodTest extends TestCase
     public function testItPassesVerificationIfCalled()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $method = new MockedMethod('foo');
         $method->registerMatchers($registry);
@@ -40,7 +40,7 @@ class MockedMethodTest extends TestCase
         $this->expectExceptionMessage('Expected method "foo" to be called at least once');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $method = new MockedMethod('foo');
         $method->registerMatchers($registry);
@@ -51,7 +51,7 @@ class MockedMethodTest extends TestCase
     public function testItPassesWhenCalledExactNumberOfTimes()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $method = new MockedMethod('foo');
         $method->registerMatchers($registry);
@@ -70,7 +70,7 @@ class MockedMethodTest extends TestCase
         $this->expectExceptionMessage('Expected method "foo" to be called 2 times');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $method = new MockedMethod('foo');
         $method->registerMatchers($registry);
@@ -86,7 +86,7 @@ class MockedMethodTest extends TestCase
         $this->expectExceptionMessage('Expected method "foo" not to be called, but it was called once.');
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldNotBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldNotBeCalledMatcher());
 
         $method = new MockedMethod('foo');
         $method->registerMatchers($registry);

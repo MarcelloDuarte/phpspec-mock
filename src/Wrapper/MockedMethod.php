@@ -9,7 +9,7 @@ use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 
-final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
+final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, Matchable
 {
     private array $calls = [];
     private array $matchers = [];
@@ -21,7 +21,7 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
 
     public function __call($method, $arguments)
     {
-        foreach ($this->matchers as $matcher) {
+        foreach ($this->matchers[self::class] as $matcher) {
             if ($matcher instanceof ExpectationMatcherInterface && $matcher->supports($method)) {
                 $this->expectations[] = $matcher->expect($this, $arguments);
                 return $this;
@@ -31,42 +31,45 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder
         throw new \BadMethodCallException("Unknown matcher method: $method");
     }
 
-    public function recordCall(array $arguments = []): void
-    {
-        $this->calls[] = $arguments;
-    }
-
     public function satisfies(string $methodName, array $arguments = []): bool
     {
         if ($methodName !== $this->name) {
             return false;
         }
 
-        if (count($this->arguments) === 1 && $this->arguments[0] instanceof \PhpSpec\Mock\Matcher\AnyArgumentsMatcher) {
-            return true; // Match any arguments
-        }
+        $expected = $this->arguments;
+        $actual = $arguments;
 
-        if (count($arguments) !== count($this->arguments)) {
-            return false;
-        }
+        foreach ($expected as $i => $matcher) {
+            if (!array_key_exists($i, $actual)) {
+                return false;
+            }
 
-        foreach ($this->arguments as $i => $expected) {
-            if ($expected instanceof \PhpSpec\Mock\Matcher\ArgumentMatcherInterface) {
-                if (!$expected->matches($arguments[$i])) {
+            if ($matcher instanceof ArgumentMatcherInterface) {
+                if ($matcher->isVariadic()) {
+                    return true;
+                }
+
+                if (!$matcher->matches($actual[$i])) {
                     return false;
                 }
-            } elseif ($expected !== $arguments[$i]) {
+            } elseif ($matcher !== $actual[$i]) {
                 return false;
             }
         }
 
-        return true;
+        return count($actual) <= count($expected);
+    }
+
+    public function recordCall(array $arguments = []): void
+    {
+        $this->calls[] = $arguments;
     }
 
     public function verify(): void
     {
         foreach ($this->expectations as $expectation) {
-            foreach ($this->matchers as $matcher) {
+            foreach ($this->matchers[self::class] as $matcher) {
                 $matcher->checkExpectation($expectation);
             }
         }

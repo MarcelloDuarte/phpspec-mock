@@ -76,8 +76,8 @@ final class DoubleConfiguration
 
     private function registerDefaultMatchers(): void
     {
-        $this->matcherRegistry->addMatcher(new ShouldBeCalledMatcher());
-        $this->matcherRegistry->addMatcher(new ShouldNotBeCalledMatcher());
+        $this->matcherRegistry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
+        $this->matcherRegistry->addMatcher(MockedMethod::class, new ShouldNotBeCalledMatcher());
     }
 
     private function findConfiguredMethod(string $methodName, array $arguments): ?DoubledMethod

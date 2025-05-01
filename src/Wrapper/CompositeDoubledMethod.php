@@ -6,58 +6,87 @@ use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\CallRecorder;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 
-final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
+final class CompositeDoubledMethod implements DoubledMethod
 {
     private ?MethodMetadata $metadata = null;
+    private readonly array $doubleMethods;
 
-    public function __construct(
-        private readonly MockedMethod $mock,
-        private readonly StubbedMethod $stub
-    ) {}
+    public function __construct(DoubledMethod ...$doubleMethods)
+    {
+        $this->doubleMethods = $doubleMethods;
+    }
 
     public function satisfies(string $methodName, array $arguments = []): bool
     {
-        return $this->stub->satisfies($methodName, $arguments);
+        $satisfied = false;
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof Satisfiable) {
+                $satisfied = $doubleMethod->satisfies($methodName, $arguments);
+            }
+        }
+
+        return $satisfied;
     }
 
     public function call(string $name, array $arguments): mixed
     {
-        $this->mock->recordCall($arguments);
-        return $this->stub->call($name, $arguments);
+        $result = null;
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof CallRecorder) {
+                $doubleMethod->recordCall($arguments);
+            }
+
+            if ($doubleMethod instanceof Satisfiable && $doubleMethod->satisfies($name, $arguments)) {
+                return $doubleMethod->call($name, $arguments);
+            }
+        }
+
+        throw new \RuntimeException("No stubbed return value available for method '$name'");
     }
 
     public function verify(): void
     {
-        $this->mock->verify();
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof Matchable) {
+                $doubleMethod->verify();
+            }
+        }
     }
 
     public function registerMatchers(MatcherRegistry $registry): void
     {
-        $this->mock->registerMatchers($registry);
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof Matchable) {
+                $doubleMethod->registerMatchers($registry->getForType(get_class($doubleMethod)));
+            }
+        }
     }
 
     public function __call(string $name, array $arguments): mixed
     {
-        // Check if the mock accepts this method (e.g. shouldBeCalled)
-        if (method_exists($this->mock, $name)) {
-            $this->mock->$name(...$arguments);
-            return $this;
-        }
-
-        // Check if the stub accepts this method (e.g. willReturn)
-        if (method_exists($this->stub, $name)) {
-            if ($this->stub->isConfigurationMethod($name)) {
-                $this->stub->$name(...$arguments);
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof CallRecorder && method_exists($doubleMethod, $name)) {
+                $doubleMethod->$name(...$arguments);
                 return $this;
             }
         }
 
-        // Last resort: try __call on the mock, in case it's a matcher method
-        try {
-            $this->mock->__call($name, $arguments);
-            return $this;
-        } catch (\BadMethodCallException) {
-            // fall through
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof Satisfiable && $doubleMethod->isConfigurationMethod($name)) {
+                $doubleMethod->$name(...$arguments);
+                return $this;
+            }
+        }
+
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof CallRecorder) {
+                try {
+                    $doubleMethod->__call($name, $arguments);
+                    return $this;
+                } catch (\BadMethodCallException) {
+                    // try next
+                }
+            }
         }
 
         throw new \RuntimeException("Method $name not handled by CompositeDoubledMethod");
@@ -65,12 +94,24 @@ final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
 
     public function getCalls(): array
     {
-        return $this->mock->getCalls();
+        $calls = [];
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof CallRecorder) {
+                $calls = $doubleMethod->getCalls();
+            }
+        }
+        return $calls;
     }
 
     public function getMethodName(): string
     {
-        return $this->mock->getMethodName();
+        $methodName = '';
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof CallRecorder) {
+                $methodName =  $doubleMethod->getMethodName();
+            }
+        }
+        return $methodName;
     }
 
     public function setMetadata(MethodMetadata $metadata)
@@ -80,6 +121,11 @@ final class CompositeDoubledMethod implements DoubledMethod, CallRecorder
 
     public function getExpectedArgs(): array
     {
-        return $this->stub->getExpectedArgs();
+        foreach ($this->doubleMethods as $doubleMethod) {
+            if ($doubleMethod instanceof Satisfiable) {
+                return $doubleMethod->getExpectedArgs();
+            }
+        }
+        return [];
     }
 }

@@ -8,7 +8,7 @@ use PhpSpec\Mock\Matcher\AnyArgumentsMatcher;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\MatcherRegistry;
 
-final class StubbedMethod implements DoubledMethod, ObjectWrapper
+final class StubbedMethod implements DoubledMethod, ObjectWrapper, Satisfiable
 {
     private array $stubs = [];
     private const string WILL_RETURN = 'willReturn';

@@ -31,7 +31,7 @@ class DoublerTest extends TestCase
     public function testItRecordsCallWhenMockedMethodIsCalled()
     {
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $mockedMethod = new MockedMethod('someMethod', [42]);
         $mockedMethod->registerMatchers($registry);
@@ -67,7 +67,7 @@ class DoublerTest extends TestCase
         $doubler = new Doubler();
 
         $registry = new MatcherRegistry();
-        $registry->addMatcher(new ShouldBeCalledMatcher());
+        $registry->addMatcher(MockedMethod::class, new ShouldBeCalledMatcher());
 
         $mockedMethod = new MockedMethod('someMethod', [42]);
         $mockedMethod->registerMatchers($registry);
