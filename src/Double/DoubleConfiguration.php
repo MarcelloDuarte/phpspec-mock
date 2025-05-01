@@ -4,6 +4,7 @@ namespace PhpSpec\Mock\Double;
 
 use PhpSpec\Mock\DoubleInterface as DoubleObject;
 use PhpSpec\Mock\Matcher\Method\BeCalledMatcher;
+use PhpSpec\Mock\Matcher\Method\HaveBeenCalledMatcher;
 use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
 use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
@@ -30,12 +31,22 @@ final class DoubleConfiguration
         $this->registerDefaultMatchers();
     }
 
+    public function double(): object
+    {
+        return $this->double;
+    }
+
     public function stub(): object
     {
         return $this->double;
     }
 
     public function mock(): object
+    {
+        return $this->double;
+    }
+
+    public function spy(): object
     {
         return $this->double;
     }
@@ -79,6 +90,7 @@ final class DoubleConfiguration
     private function registerDefaultMatchers(): void
     {
         $this->matcherRegistry->addMatcher(MockedMethod::class, new BeCalledMatcher());
+        $this->matcherRegistry->addMatcher(SpiedMethod::class, new HaveBeenCalledMatcher());
     }
 
     private function findConfiguredMethod(string $methodName, array $arguments): ?DoubledMethod

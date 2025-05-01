@@ -11,6 +11,7 @@ use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
 use PhpSpec\Mock\Wrapper\Matchable;
 use PhpSpec\Mock\Wrapper\ObjectWrapper;
+use PhpSpec\Mock\Wrapper\Silent;
 
 final class SpiedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, Matchable
 {
@@ -22,18 +23,20 @@ final class SpiedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, M
     public function __construct(
         private string $name,
         private readonly array $arguments = [],
-        private ?MatcherRunner $runner = null
+        private ?MatcherRunner $matcherRunner = null
     ) {
-        $this->runner ??= new MatcherRunner();
+        $this->matcherRunner ??= new MatcherRunner();
     }
 
     public function __call($method, $arguments)
     {
-        foreach ($this->matchers[self::class] as $matcher) {
-            if ($matcher instanceof ExpectationMatcherInterface && $matcher->supports($method)) {
-                $this->expectations[] = $matcher->expect($this, $arguments);
-                return $this;
-            }
+        $matchers = $this->matchers[self::class] ?? [];
+
+        $expectation = $this->matcherRunner->run($matchers, $this, $method, $arguments);
+
+        if ($expectation !== null) {
+            $this->expectations[] = $expectation;
+            return $this;
         }
 
         throw new \BadMethodCallException("Unknown matcher method: $method");

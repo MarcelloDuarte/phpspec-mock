@@ -6,7 +6,6 @@ namespace PhpSpec\Mock\Wrapper\DoubledMethod;
 use PhpSpec\Mock\CodeGeneration\MethodMetadata;
 use PhpSpec\Mock\Matcher\ArgumentMatcherInterface;
 use PhpSpec\Mock\Matcher\CallRecorder;
-use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
 use PhpSpec\Mock\Matcher\Registry\MatcherRegistry;
 use PhpSpec\Mock\Matcher\Runner\MatcherRunner;
 use PhpSpec\Mock\Wrapper\DoubledMethod;
@@ -23,16 +22,16 @@ final class MockedMethod implements DoubledMethod, ObjectWrapper, CallRecorder, 
     public function __construct(
         private string $name,
         private readonly array $arguments = [],
-        private ?MatcherRunner $runner = null
+        private ?MatcherRunner $matcherRunner = null
     ) {
-        $this->runner ??= new MatcherRunner();
+        $this->matcherRunner ??= new MatcherRunner();
     }
 
     public function __call($method, $arguments)
     {
         $matchers = $this->matchers[self::class] ?? [];
 
-        $expectation = $this->runner->apply($matchers, $this, $method, $arguments);
+        $expectation = $this->matcherRunner->run($matchers, $this, $method, $arguments);
 
         if ($expectation !== null) {
             $this->expectations[] = $expectation;

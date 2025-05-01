@@ -8,7 +8,7 @@ use PhpSpec\Mock\Matcher\ExpectationMatcherInterface;
 
 final class MatcherRunner
 {
-    public function apply(
+    public function run(
         array $matchers,
         CallRecorder $subject,
         string $method,

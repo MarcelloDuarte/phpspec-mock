@@ -9,7 +9,7 @@
     "autoload-dev:": {
         "psr-4": {
             "Tests\\PhpSpec\\Mock\\": "tests/unit/",
-            "fixtures\\": "tests/fixtures"
+            "Tests\\Feature\\PhpSpec\\Mock\\": "tests/feature"
         }
     },
     "authors": [
